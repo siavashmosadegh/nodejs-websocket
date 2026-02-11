@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Socket Chat</title>
+
+  <style>
+    body {
+      font-family: Arial;
+      background: #f3f3f3;
+    }
+
+    #chat {
+      list-style: none;
+      padding: 0;
+    }
+
+    li {
+      background: white;
+      margin: 5px;
+      padding: 8px;
+      border-radius: 5px;
+    }
+  </style>
+</head>
+
+<body>
+
+  <h2>Chat App</h2>
+
+  <ul id="chat"></ul>
+
+  <input id="msg" placeholder="Type message..." />
+  <button onclick="send()">Send</button>
+
+  <!-- Socket.io client -->
+  <script src="/socket.io/socket.io.js"></script>
+
+  <script>
+
+    // اتصال به سرور
+    const socket = io();
+
+    // دریافت پیام
+    socket.on('chatMessage', (msg) => {
+
+      const li = document.createElement('li');
+      li.innerText = msg;
+
+      document.getElementById('chat').appendChild(li);
+    });
+
+    // ارسال پیام
+    function send() {
+
+      const input = document.getElementById('msg');
+
+      const message = input.value;
+
+      // ارسال به سرور
+      socket.emit('chatMessage', message);
+
+      input.value = '';
+    }
+
+  </script>
+
+</body>
+</html>
