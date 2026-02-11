@@ -1,35 +1,35 @@
+// Import packages
 const express = require('express');
 const http = require('http');
 const { Server } = require('socket.io');
 
+// Create express app
 const app = express();
 
+// Create HTTP server (خیلی مهم)
 const server = http.createServer(app);
 
+// Create socket server
 const io = new Server(server);
 
-app.use(express.static)('public');
+// Serve static files
+app.use(express.static('public'));
 
-//when client connects
+// Socket connection
 io.on('connection', (socket) => {
 
-    console.log('User connected :', socket.id);
+  console.log('User connected:', socket.id);
 
-    // when client send message
-    socket.on('chatMessage', (msg) => {
-        
-        console.log('Message: ', msg);
+  socket.on('chatMessage', (msg) => {
+    io.emit('chatMessage', msg);
+  });
 
-        // send the message to all Users
-        io.emit('chatMessage', msg);
-    })
+  socket.on('disconnect', () => {
+    console.log('User disconnected');
+  });
 });
 
-// when Users disconnects
-socket.on('disconnect', () => {
-    console.log('User disconnected : ', socket.id);
+// Start server (دقت کن server نه app)
+server.listen(3000, () => {
+  console.log('Server running on http://localhost:3000');
 });
-
-server.listen(3000 , () => {
-    console.log('Server running on http://localhost:3000');
-})
